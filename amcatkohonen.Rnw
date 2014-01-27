@@ -1,0 +1,32 @@
+\documentclass{article}
+\title{Self-organizing Maps in R for Amcat}
+\author{Paul Huygen}
+\newcommand{\SOM}{\textsc{som}}
+\begin{document}
+
+\section{Introduction}
+\label{sec:introduction}
+
+This document addresses the problem to recognise topics in the texts of
+documents in a collection in an unsupervised way. A common way to do
+this, is to model documents as ``bags-of-words'' and topics as
+collections of words that occur frequently in the same
+documents. Generally used techniques to solve this problem are Latent
+Semantic Analysis~\cite{deerwester1990}, and Latent Dirichlet
+Analysis~\cite{blei2003a}. 
+
+Another approach to this problem is the ``Self-Organizing Map''
+(\SOM{}) or Kohonen-network~\cite{kohonen1982a}. This approach is
+reminescent to a cluster-technique like K-means, but the
+cluster-centers are forced to have a certain topological relationship
+to each other, and as a result the cluster-centers can be visualised
+as a two-dimenional grid in which clusters that are related to each
+other are more in the neighbourhood to each other that less-related
+clusters.
+
+There exists an ``R'' package to generate \SOM{}'s from data.
+
+\bibliographystyle{plain}
+\bibliography{amcatkohonen}
+
+\end{document}
