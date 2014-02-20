@@ -16,6 +16,12 @@ grid.shape <- "rectangular"
 ##
 conn = amcat.connect(host) # AmCAT vraagt om je inloggegevens
 features = amcat.getFeatures(conn, articleset_id)
+document.total <- aggregate(hits ~ id, features, FUN='sum')
+
+
+
+
+
 
 ##
 ## Filter out too common/too rare words
@@ -31,7 +37,6 @@ words = words[!words$word %in% too_rare,]
 words = words[!words$word %in% too_common,]
 voca = words
 features = features[features$word %in% voca$word,]
-
 ##
 ## Create matrix
 ##

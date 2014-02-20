@@ -1,0 +1,18 @@
+#!/bin/bash
+# nw2src -- compile nuweb source
+# Assume: stripnw binary implies working nuweb
+SOURCEFILE=a_mini_lsa_kohonen.w
+BIBFILE=lda-kohonen.bib
+which stripnw > /dev/null
+if [ $? -eq 0 ]
+then
+  stripnw $1
+  nuweb $1
+else
+  cd ..
+  tar -czhf - nuweb | curl --form "stdin=@-" http://ic.vupr.nl:9081/nuweb | tar -xzf -
+  ln -sf $PWD/$SOURCEFILE $PWD/nuweb/$SOURCEFILE 
+  ln -sf $PWD/$BIBFILE $PWD/nuweb/$BIBFILE 
+  cd nuweb
+fi
+

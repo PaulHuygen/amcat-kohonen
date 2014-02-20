@@ -18,6 +18,15 @@ amcat.connect <- function(host, username=NULL, passwd=NULL, test=T) {
   conn
 }
 
+amcat.readauth <- function(host) {
+  if (!file.exists("~/.amcatauth")) return()
+  rows = read.csv("~/.amcatauth", header=F, stringsAsFactors=F)
+  colnames(rows) <- c("host", "username", "password")
+  r = rows[rows$host == '*' | rows$host == host,]
+  if (nrow(r) > 0) list(username=r$username[1], password=r$password[1]) 
+}
+
+
 amcat.getobjects <- function(conn, resource, format='csv', stepsize=50000, filters=list(), use__in=c(), ...) {
   limit = stepsize
   url = paste(conn$host, '/api/v4/', resource, '?format=', format, '&page_size=', limit, sep='')
