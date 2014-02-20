@@ -1,0 +1,134 @@
+\documentclass{article}
+\title{Self-organizing Maps in R for Amcat}
+\author{Paul Huygen}
+\newcommand{\LDA}{\textsc{lda}}
+\newcommand{\SOM}{\textsc{som}}
+\begin{document}
+
+\section{Introduction}
+\label{sec:introduction}
+
+This document addresses the problem to recognise topics in the texts of
+documents in a collection in an unsupervised way. A common way to do
+this, is to model documents as ``bags-of-words'' and topics as
+collections of words that occur frequently in the same
+documents. Generally used techniques to solve this problem are Latent
+Semantic Analysis~\cite{deerwester1990}, and Latent Dirichlet
+Analysis~\cite{blei2003a}. 
+
+Another approach to this problem is the ``Self-Organizing Map''
+(\SOM{}) or Kohonen-network~\cite{kohonen1982a}. This approach is
+reminescent to a cluster-technique like K-means, but the
+cluster-centers are forced to have a certain topological relationship
+to each other, and as a result the cluster-centers can be visualised
+as a two-dimenional grid in which clusters that are related to each
+other are more in the neighbourhood to each other that less-related
+clusters.
+
+There exists an ``R'' package to generate \SOM{}'s from
+data~\cite{wehrens2007a}. 
+
+<<loadPackages>>=
+install.packages('kohonen')
+library('kohonen')
+@ 
+
+In this article topic analysis will be performed with the \SOM{}
+package as well as with the \LDA{} package.
+
+\section{Very small documentset}
+\label{sec:verysmall}
+
+Let us generate a tiny set of six documents. In it, we artificially
+create two topics. One of the topics can be recognized by the usage of
+the words ``aap'', ``noot'', ``mies'', ``wim'' and ``zus''. The other
+topic can be recognized by the words ``maan'', ``zaag'', ``fien'',
+``vier'', ``koek'', ``schoen''. Apart from the topics, some general
+words are used in all of the documents, i.e. ``teun'',  ``vuur'',
+``gijs'', ``lam'', ``kees'' and  ``bok''.
+
+<<exampledoc>>=
+example <- c( "aap noot mies wim zus jet teun vuur gijs lam kees bok"
+            , "maan zaag fien vier koek schoen teun vuur gijs lam kees bok"
+            , "aap noot mies wim zus maan teun vuur gijs lam kees bok"
+            , "aap noot zaag wim zus teun gijs lam bok"
+            , "maan zaag mies vier koek schoen gijs lam kees bok"
+            , "zaag fien vier wim schoen teun vuur gijs lam kees bok"
+            )
+ndocs <- length(example)
+@ 
+
+\subsection{Generate SOM}
+\label{sec:som}
+
+Generate a vocabulary: Concatenate the words in the documents and then
+perform the \texttt{unique} operation.
+
+<<generatevocabulary>>=
+for (i in 1:length(example)){
+    if(i == 1){
+        vocab <- example[1]
+    } else {
+        vocab <- paste(vocab, example[i])
+    }
+}                    
+vocab <- unique(strsplit(vocab, " ")[[1]])
+nwords <- length(vocab)
+@ 
+
+Generate a matrix in which each row represent a document and each
+column a word. The elements of the matrix contain the number of times
+that the word occurs in the document. Note, that eventually we should
+use the word ``frequency'' instead of the number of occurrances.
+
+<<generate_hittable>>=
+hittable <- matrix(data = 0, nrow = ndocs, ncol = nwords, dimnames=list(1:length(example), vocab))
+for (i in 1:length(example)){
+    wordlist <- strsplit(example[i], " ")[[1]]
+    wordnrs <- match(wordlist, vocab)
+    for(j in 1:length(wordlist)){
+        hittable[i, wordnrs[j]] <- hittable[i, wordnrs[j]] + 1
+    }
+}                    
+@ 
+
+Generate a \SOM{} with two nodes:
+
+<<make_som>>=
+set.seed(4)
+docs.som <- som(data = hittable, grid = somgrid(2, 1, 'rectangular'))
+@ 
+
+
+For some reason R does not want to plot the \SOM{}:
+<<plot_som>>=
+plot(docs.som, type = "counts", main = "My topic distribution")
+@ 
+
+However, we can check to which nodes the computer assigns the
+documents. Let us do this three times:
+
+<<some_scrap>>=
+classification <- matrix(0, nrow =3, ncol = ndocs)
+for(i in 1:3){
+ docs.som <- som(data = hittable, grid = somgrid(2, 1, 'rectangular'))
+ classification[i,] <- docs.som$unit.classif
+}
+classification
+@ 
+
+\subsection{LDA}
+\label{sec:LDA}
+
+<<some_scrap>>=
+corpus <- lexicalize(example, lower=TRUE)
+result <- lda.collapsed.gibbs.sampler(corpus$documents, 3, corpus$vocab, 25, 0.1, 0.1, compute.log.likelihood=TRUE)
+
+@ 
+
+
+
+\bibliographystyle{plain}
+\bibliography{amcatkohonen}
+
+\end{document}
