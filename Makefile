@@ -1,8 +1,9 @@
 current_dir = $(shell pwd)
 workdir=$(current_dir)/nuweb
 targetmake=$(workdir)/Makefile
-source=a_mini_lsa_kohonen.w
+source=a_youp_lsa_kohonen.w
 bibf=lda-kohonen.bib
+
 
 default: $(targetmake)
 
@@ -20,3 +21,5 @@ $(workdir)/%.w : %.w $(workdir)
 
 $(workdir) :
 	mkdir $(workdir)
+	cp amcatr.r  $(workdir)
+	cp amcat_getdata.r  $(workdir)
