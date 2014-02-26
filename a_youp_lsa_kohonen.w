@@ -680,6 +680,27 @@ bibtex m4_projname
 nuweb m4_projname.w
 @| @}
 
+\section{Indexes}
+\label{sec:indexes}
+
+\subsection{Filenames}
+\label{sec:filenames}
+
+@f
+
+\subsection{Macro's}
+\label{sec:macro's}
+
+
+@m
+
+\subsection{identifiers}
+\label{sec:identifiers}
+
+
+@u
+
+
 \section{References}
 \label{sec:res}
 
