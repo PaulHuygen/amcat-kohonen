@@ -62,3 +62,4 @@ navigator/media/static
 *.log
 *.bbl
 *.blg
+.Rproj.user
