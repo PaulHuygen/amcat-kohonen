@@ -1,0 +1,81 @@
+Abstracts of JSS papers
+========================================================
+
+# Abstract
+This document demonstrates the usage of the Topicmodels package to analyse a document-collection as described by Grün and Hornik (2011).
+
+# Do the work
+
+## Preparation
+
+Install the needed packages. The corpus to be analysed is available as R package:
+
+```{r}
+install.packages("corpus.JSS.papers",
+  repos = "http://datacube.wu.ac.at/", type = "source")
+```
+
+Install other packages:
+
+```{r}
+install.packages('topicmodels')
+install.packages('tm')
+install.packages('XML')
+```
+
+```{r}
+library('topicmodels')
+library('XML')
+library('slam')
+```
+
+```{r}
+remove_HTML_markup <- function(s) tryCatch({
+    doc <- htmlTreeParse(paste("<!DOCTYPE html>", s),
+    asText = TRUE, trim = FALSE)
+    xmlValue(xmlRoot(doc))
+}, error = function(s) s)
+```
+
+
+Load the corpus:
+
+```{r}
+data("JSS_papers", package = "corpus.JSS.papers")
+```
+
+Select the abstracts up to august 5, 2005 and omit the papers that contain funny characters:
+
+```{r}
+JSS_papers <- JSS_papers[JSS_papers[,"date"] < "2010-08-05",]
+JSS_papers <- JSS_papers[sapply(JSS_papers[, "description"], Encoding) == "unknown",]
+```
+
+```{r}
+Sys.setlocale("LC_COLLATE", "C")
+```
+
+
+```{r}
+JSS_dtm <- DocumentTermMatrix(
+            corpus,
+            control = list( stemming = TRUE
+			              , stopwords = TRUE
+						  , minWordLength = 3
+						  , removeNumbers = TRUE
+						  , removePunctuation = TRUE
+						  )
+		   )
+dim(JSS_dtm)
+```
+
+```{r}
+summary(col_sums(JSS_dtm))
+```
+
+
+
+# References
+
+
+* Bettina Grün and Kurt Hornik (2011): "topicmodels: An R package for Fitting Topic Models." Journal of Statistical    Software 40(13). URL: [Original paper](http://www.jstatsoft.org/v40/i13/);  [Modified/shortened version on Rcran](http://cran.r-project.org/web/packages/topicmodels/vignettes/topicmodels.pdf) 

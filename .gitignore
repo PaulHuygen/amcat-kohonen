@@ -56,6 +56,7 @@ navigator/media/static
 # R meuk
 .Rhistory
 .RData
+.html
 
 # LaTeX meuk
 *.aux
